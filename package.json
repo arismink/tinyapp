@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/arismink/tinyapp/issues"
   },
-  "homepage": "https://github.com/arismink/tinyapp#readme"
+  "homepage": "https://github.com/arismink/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
