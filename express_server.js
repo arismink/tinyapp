@@ -26,9 +26,15 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+app.post("/urls/:shortURL", (req, res) => {
+  console.log('testing post');
+  urlDatabase[req.params.shortURL.substring(1)] = 'http://' + req.body.longURL;
+  console.log(urlDatabase); 
+})
+
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = req.body.longURL;
+  urlDatabase[newShortURL] = 'http://' + req.body.longURL;
   console.log(`New short url created: ${newShortURL} for ${req.body.longURL}`);
   res.redirect(`/urls:${newShortURL}`);
 });
@@ -54,6 +60,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   console.log('new database: ', urlDatabase);
   res.redirect("/urls")
 })
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
