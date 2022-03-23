@@ -3,41 +3,55 @@ const app = express();
 const PORT = 8080;
 
 const bodyParser = require("body-parser");
-
 const cookieParser = require('cookie-parser');
 
-app.use(bodyParser.urlencoded({extended: true}));
- 
 app.set("view engine", "ejs");
 
+// middleware:
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  // "b2xVn2": "http://www.lighthouselabs.ca",
+  // "9sm5xK": "http://www.google.com"
 };
+
+// routes:
 
 app.get("/", (req, res) => {
   res.send("Hi there!");
 });
 
+// homepage
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies.username
+  };
+
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
-
+// login
 app.post("/login", (req, res) => {
-  const username = req.body;
-  res.cookie('user', username, { maxage: 10800 }).redirect("/urls");
-  console.log(req.body); 
+  console.log('logged in user: ', req.body.username);
+  res.cookie("username", req.body.username).redirect("/urls");
 })
 
-app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = 'http://' + req.body.longURL;
-  console.log(urlDatabase); 
+// logout
+app.post("/logout", (req, res) => {
+  console.log('logged out user');
+  res.clearCookie("username", res.cookie.user).redirect("/urls");
 })
+
+// create new shortURL
+app.get("/urls/new", (req, res) => {
+  const templateVars = { 
+    urls: urlDatabase,       
+    username: req.cookies.username };
+
+  res.render("urls_new", templateVars);
+});
 
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
@@ -46,24 +60,30 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newShortURL}`);
 });
 
+
+// update existing shortURL
+app.post("/urls/:shortURL", (req, res) => {
+  urlDatabase[req.params.shortURL] = 'http://' + req.body.longURL;
+  console.log(urlDatabase); 
+})
+
 app.get("/urls/:shortURL", (req, res) => {
-  console.log(req.params.shortURL);
   const templateVars = { 
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies.username
   };
-  console.log(templateVars);
-
   res.render("urls_show", templateVars);
 });
 
+// redirecting shortLink
 app.get("/u/:shortURL", (req, res) => {
-  console.log('shortURL', req.params.shortURL);
   const longURL = urlDatabase[req.params.shortURL];
   console.log(`Redirecting to: ${longURL}`);
   res.redirect(longURL); 
 })
 
+// delete existing shortURL
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log('deleting');
   
