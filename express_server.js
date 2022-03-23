@@ -32,6 +32,19 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// registration
+app.get("/register", (req, res) => {
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies.username
+  };
+  res.render("urls_registration", templateVars);
+})
+
+app.post("/register", (req, res) => {
+  console.log('attemping to register', req.body.email);
+})
+
 // login
 app.post("/login", (req, res) => {
   console.log('logged in user: ', req.body.username);
