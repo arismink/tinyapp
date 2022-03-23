@@ -4,8 +4,10 @@ const PORT = 8080;
 
 const bodyParser = require("body-parser");
 
-app.use(bodyParser.urlencoded({extended: true}));
+const cookieParser = require('cookie-parser');
 
+app.use(bodyParser.urlencoded({extended: true}));
+ 
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -25,6 +27,12 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
+app.post("/login", (req, res) => {
+  const username = req.body;
+  res.cookie('user', username, { maxage: 10800 }).redirect("/urls");
+  console.log(req.body); 
+})
 
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = 'http://' + req.body.longURL;
