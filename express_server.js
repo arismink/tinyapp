@@ -11,9 +11,22 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 const urlDatabase = {
-  // "b2xVn2": "http://www.lighthouselabs.ca",
-  // "9sm5xK": "http://www.google.com"
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com"
 };
 
 // routes:
@@ -42,7 +55,20 @@ app.get("/register", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-  console.log('attemping to register', req.body.email);
+  const userEnteredEmail = req.body.email;
+  const userEnteredPassword = req.body.password;
+  const randUserID = 'u_' + generateRandomString();
+
+  users[randUserID] = {
+    id: randUserID,
+    email: userEnteredEmail,
+    password: userEnteredPassword
+  }
+  console.log('user created for ', randUserID);
+  console.log(users);
+
+  res.cookie("user_id", randUserID).redirect("/urls");
+
 })
 
 // login
