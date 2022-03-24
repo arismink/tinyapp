@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const bcrypt = require("bcryptjs"); 
-
 const bodyParser = require("body-parser");
-// const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
+
+const { generateRandomString, emailCheck, userURLS } = require("./helpers")
 
 app.set("view engine", "ejs");
 
@@ -62,7 +62,6 @@ app.get("/", (req, res) => {
 });
 
 // access denied: not logged in
-
 app.get("/access_denied", (req, res) => {
   const templateVars = {
     user: undefined
@@ -122,7 +121,6 @@ app.post("/register", (req, res) => {
   console.log('New user registered:', randUserID);
   console.log('Existing users in database:', users);
 
-  // res.cookie("user_id", randUserID).redirect("/urls");
   req.session.user = req.body.user_id;
   res.redirect("/urls")
 
@@ -248,30 +246,3 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-
-function generateRandomString() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charLength = 6;
-  let randStr = '';
-
-  for (let x = 0; x < charLength; x++) {
-    randStr += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  return randStr;
-}
-
-function emailCheck(users, email) {
-  for (let user in users) {
-    if (users[user].email === email) return user;
-  }
-}
-
-function userURLS(database, id) {
-  let newDB = {};
-
-  for (let url in database) {
-    if (database[url].userID === id) newDB[url] = database[url].longURL
-  }
-  return newDB;
-}
