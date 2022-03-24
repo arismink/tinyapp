@@ -1,3 +1,4 @@
+// generate random string for userID and shortURLs
 const generateRandomString = function() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charLength = 6;
@@ -10,12 +11,14 @@ const generateRandomString = function() {
   return randStr;
 }
 
-const emailCheck = function(users, email) {
+// checks if email already exists in database
+const findUserByEmail = function(users, email) {
   for (let user in users) {
     if (users[user].email === email) return user;
   }
 }
 
+// returns a new temporary database of shortURLs belonging to specified userID
 const userURLS = function(database, id) {
   let newDB = {};
 
@@ -25,4 +28,4 @@ const userURLS = function(database, id) {
   return newDB;
 }
 
-module.exports = { generateRandomString, emailCheck, userURLS };
+module.exports = { generateRandomString, findUserByEmail, userURLS };
