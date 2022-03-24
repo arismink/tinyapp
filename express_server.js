@@ -21,6 +21,11 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
+  },
+  "u_94x92": {
+    id: "u_94x92",
+    email: "a@test.ca",
+    password: "hi"
   }
 }
 
@@ -37,9 +42,12 @@ app.get("/", (req, res) => {
 
 // homepage
 app.get("/urls", (req, res) => {
+  const user_id = req.cookies["user_id"];
+  console.log(users[user_id]);
+
   const templateVars = { 
     urls: urlDatabase,
-    username: req.cookies.username
+    user: users[user_id]
   };
 
   res.render("urls_index", templateVars);
@@ -47,9 +55,10 @@ app.get("/urls", (req, res) => {
 
 // registration
 app.get("/register", (req, res) => {
+  const user_id = req.cookies["user_id"];
   const templateVars = { 
     urls: urlDatabase,
-    username: req.cookies.username
+    user: users[user_id]
   };
   res.render("urls_registration", templateVars);
 })
@@ -59,12 +68,23 @@ app.post("/register", (req, res) => {
   const userEnteredPassword = req.body.password;
   const randUserID = 'u_' + generateRandomString();
 
+  if (!userEnteredEmail) {
+    return res.error(404).send("The email entered cannot be empty.");
+  }
+  if (!userEnteredPassword) {
+    return res.status(404).send("The password entered cannot be empty.")
+  }
+
+  if (emailCheck(users, userEnteredEmail)) {
+    return res.status(400).send("The email entered already exists. Please enter a new email address.")
+  }
+
   users[randUserID] = {
     id: randUserID,
     email: userEnteredEmail,
     password: userEnteredPassword
   }
-  console.log('user created for ', randUserID);
+  console.log('user created for ', randUserID)
   console.log(users);
 
   res.cookie("user_id", randUserID).redirect("/urls");
@@ -73,21 +93,23 @@ app.post("/register", (req, res) => {
 
 // login
 app.post("/login", (req, res) => {
-  console.log('logged in user: ', req.body.username);
-  res.cookie("username", req.body.username).redirect("/urls");
+  console.log('logged in user: ', req.body.email);
+  res.cookie("user_id", user_id).redirect("/urls");
 })
 
 // logout
 app.post("/logout", (req, res) => {
   console.log('logged out user');
-  res.clearCookie("username", res.cookie.user).redirect("/urls");
+  res.clearCookie("user_id", res.cookie.user).redirect("/urls");
 })
 
 // create new shortURL
 app.get("/urls/new", (req, res) => {
+  const user_id = req.cookies["user_id"];
+
   const templateVars = { 
     urls: urlDatabase,       
-    username: req.cookies.username };
+    user: users[user_id] };
 
   res.render("urls_new", templateVars);
 });
@@ -107,10 +129,11 @@ app.post("/urls/:shortURL", (req, res) => {
 })
 
 app.get("/urls/:shortURL", (req, res) => {
+  const user_id = req.cookies["user_id"];
   const templateVars = { 
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies.username
+    user: users[user_id]
   };
   res.render("urls_show", templateVars);
 });
@@ -156,3 +179,13 @@ function generateRandomString() {
   
   return randStr
 };
+
+function emailCheck(users, email) {
+  for (let user in users) {
+    console.log(users[user].email);
+    if (users[user].email === email) {
+      return true
+    }
+  }
+}
+
