@@ -24,7 +24,6 @@
       </thead>
       <tbody>       
         
-        <% if (username) { %>
 
         <% for(let url in urls) { %>
           <tr>
@@ -34,7 +33,6 @@
             <td><form method="POST" action="/urls/<%= url %>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form></td>
           </tr>
         <% } %>
-      <% } %>
       </tbody>
     </table>
 
