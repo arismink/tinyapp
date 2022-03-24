@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 
-const { generateRandomString, emailCheck, userURLS } = require("./helpers")
+const { generateRandomString, findUserByEmail, userURLS } = require("./helpers")
 
 app.set("view engine", "ejs");
 
@@ -55,13 +55,12 @@ const urlDatabase = {
   }
 };
 
-// routes:
 
 app.get("/", (req, res) => {
   res.send("Hi there!");
 });
 
-// access denied: not logged in
+// access denied: when user is not logged in
 app.get("/access_denied", (req, res) => {
   const templateVars = {
     user: undefined
@@ -109,7 +108,7 @@ app.post("/register", (req, res) => {
     return res.status(404).send("The password entered cannot be empty.");
   }
 
-  if (emailCheck(users, userEnteredEmail)) {
+  if (findUserByEmail(users, userEnteredEmail)) {
     return res.status(400).send("The email entered already exists. Please enter a new email address.");
   }
 
@@ -138,7 +137,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const userEnteredEmail = req.body.email;
   const userEnteredPassword = req.body.password;
-  const user_id = emailCheck(users, userEnteredEmail)
+  const user_id = findUserByEmail(users, userEnteredEmail)
   const hashedPassword = users[user_id].password
 
   if(user_id) {
