@@ -21,23 +21,30 @@
                     <tr>
                         <th scope="col">Short URL</th>
                         <th scope="col">Long URL</th>
+
+                        <% if (user) { %>
                         <th scope="col">Edit</th>
                         <th scope="col">Delete</th>
+                    
                     </tr>
                 </thead>
                 <tbody>
 
-                    <% if (user) { %>
+
                         <% for(let url in urls) { %>
+
                             <tr>
                                 <td>
-                                    <%= url %>
+                                    <a href="/u/<%= url %>">
+                                        <%= url %>
+                                    </a>
                                 </td>
                                 <td>
                                     <a href="/u/<%= url %>">
                                         <%= urls[url] %>
                                     </a>
                                 </td>
+                     
                                 <td>
                                     <form method="GET" action="/urls/<%=
                                                 url %>"><button type="submit" class="btn
@@ -47,10 +54,13 @@
                                 <td>
                                     <form method="POST" action="/urls/<%=
                                             url %>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form>
+
+                                    
                                 </td>
-                            </tr>
-                            <% } %>
                                 <% } %>
+                            </tr>
+
+                        <% } %>
                 </tbody>
             </table>
 
