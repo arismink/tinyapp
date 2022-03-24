@@ -15,17 +15,17 @@
 
             </div>
         </div>
-        <% if (!username) { %>
+        <% if (!user) { %>
   
           <form class="form-inline" action="/login" method="POST">
-                  <input class="form-control mr-sm-2" type="text" name="username" id="username" placeholder="Username" style="margin-right: 1em;">
+                  <input class="form-control mr-sm-2" type="text" name="email" id="email" placeholder="email" style="margin-right: 1em;">
   
                 <button type="submit" class="btn btn-outline-dark my-2 my-sm-0">Login</button>
                
           </form>
           <% } else { %>
             <span class="navbar-text text-light" style="margin-right: 1em">
-              Logged in as: <b><%= username %></b>
+              Logged in as: <b><%= user.email %></b>
             </span>
               <form class="form-inline" action="/logout" method="POST">
     
