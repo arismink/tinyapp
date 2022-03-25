@@ -23,19 +23,23 @@ const users = {
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
-    userID: "aJ48lW"
+    userID: "aJ48lW",
+    dateCreated: "Wed Mar 23 2022"
     },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW"
+    userID: "aJ48lW",
+    dateCreated: "Wed Mar 23 2022"
   },
   hf43nj: {
     longURL: "https://www.facebook.com",
-    userID: "u_94x92"
+    userID: "u_94x92",
+    dateCreated: "Wed Mar 23 2022"
   },
   kf932d: {
     longURL: "https://www.example.edu",
-    userID: "u_94x92"
+    userID: "u_94x92",
+    dateCreated: "Thurs Mar 24 2022"
   }
 };
 
