@@ -7,7 +7,7 @@ This project was created for educational purposes to become acquainted with GET 
 
 ## Final Product
 
-![ScreenShot](https://raw.github.com/arismink/tinyapp/main/images/login.png)
+![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/login.png)
 !["screenshot description"](#)
 !["screenshot description"](#)
 
