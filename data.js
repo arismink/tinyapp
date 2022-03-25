@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs"); 
 
+// Standard test users
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -18,6 +19,7 @@ const users = {
   }
 };
 
+// Standard test database
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -37,4 +39,4 @@ const urlDatabase = {
   }
 };
 
-module.exports = { users, urlDatabase };
+module.exports = { users, urlDatabase };  

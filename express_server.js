@@ -20,7 +20,11 @@ app.use(cookieSession({
 }));
 
 app.get("/", (req, res) => {
-  res.send("Hi there!");
+  const user_id = req.session.user_id;
+
+  if (!user_id) return res.redirect("/login");
+
+  res.redirect("/urls");
 });
 
 // access denied: when user is not logged in
@@ -200,10 +204,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.listen(PORT, () => {
