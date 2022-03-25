@@ -40,33 +40,33 @@
       - [x] a text input field for the original (long) URL
       - [x] a submit button which makes a POST request to `/urls/`
   - If user is not logged in:
-    - [ ] redirects to the `/login` page
+    - [x] redirects to the `/login` page
 - `GET /urls/:id`
   - if user is logged in and owns the URL for the given ID:
-    - [ ] returns HTML with:
-    - [ ] the site header (see Display Requirements above)
-    - [ ] the short URL (for the given ID)
-    - [ ] a form which contains:
-      - [ ] the corresponding URL
-      - [ ] an update button which makes a POST request to `/urls/:id`
+    - [x] returns HTML with:
+    - [x] the site header (see Display Requirements above)
+    - [x] the short URL (for the given ID)
+    - [x] a form which contains:
+      - [x] the corresponding URL
+      - [x] an update button which makes a POST request to `/urls/:id`
     - [ ] (Stretch) the date the short URL was created
     - [ ] (Stretch) the number of times the short URL was visited
     - [ ] (Stretch) the number of unique visits for the short URL
   - if a URL for the given ID does not exist
-    - [ ] (Minor) returns HTML with a relevant error message
+    - [x] (Minor) returns HTML with a relevant error message
   - if user is not logged in:
-    - [ ] returns HTML with a relevant error message
+    - [x] returns HTML with a relevant error message
   - if user is logged in but does not own the URL with the given ID:
-    - [ ] returns HTML with a relevant error message
+    - [x] returns HTML with a relevant error message
 - `GET /u/:id`
   - if URL for the given ID exists:
-    - [ ] redirects to the corresponding long URL
+    - [x] redirects to the corresponding long URL
   - if URL for the given ID does not exist:
-    - [ ] (Minor) returns HTML with a relevant error message
+    - [x] (Minor) returns HTML with a relevant error message
 - `POST /urls`
   - if user is logged in
-    - [ ] generates a short URL, saves it, and associates it with the user
-    - [ ] redirects to `/urls/:id`, where `:id` matches the ID of the newly saved URL
+    - [x] generates a short URL, saves it, and associates it with the user
+    - [x] redirects to `/urls/:id`, where `:id` matches the ID of the newly saved URL
   - if user is not logged in:
     - [ ] (Minor) returns HTML with a relevant error message
 - `POST /urls/:id`
