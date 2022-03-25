@@ -27,13 +27,13 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// access denied: when user is not logged in
+// Deny user access when user is not logged in
 app.get("/access_denied", (req, res) => {
   const templateVars = { user: users[req.session.user_id] };
   res.render("accessDenied", templateVars);
 });
 
-// homepage
+// Homepage
 app.get("/urls", (req, res) => {
   const user_id = req.session.user_id;
 
@@ -47,7 +47,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// registration
+// Registration page
 app.get("/register", (req, res) => {
   if (req.session.user_id) return res.redirect("/urls");
 
@@ -56,6 +56,7 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+// Register a new email and password
 app.post("/register", (req, res) => {
   const userEnteredEmail = req.body.email;
   const userEnteredPassword = req.body.password;
@@ -85,7 +86,7 @@ app.post("/register", (req, res) => {
 
 });
 
-// login
+// Login page
 app.get("/login", (req, res) => {
 
   if (req.session.user_id) return res.redirect("/urls");
@@ -97,6 +98,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+// User login form
 app.post("/login", (req, res) => {
   const userEnteredEmail = req.body.email;
   const userEnteredPassword = req.body.password;
@@ -114,13 +116,13 @@ app.post("/login", (req, res) => {
 
 });
 
-// logout
+// Logout page
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 });
 
-// create new shortURL
+// New shortURL form creation
 app.get("/urls/new", (req, res) => {
   const user_id = req.session.user_id;
   const templateVars = {
@@ -135,12 +137,15 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// Add new shortURL to database
 app.post("/urls", (req, res) => {
+
   if (users[req.session.user_id]) {
     const newShortURL = generateRandomString();
     const user_id = req.session.user_id;
+    const d = new Date();
 
-    urlDatabase[newShortURL] = { longURL: "http://" + req.body.longURL, userID: user_id };
+    urlDatabase[newShortURL] = { longURL: "http://" + req.body.longURL, userID: user_id, dateCreated: new Date().toDateString() };
 
     return res.redirect(`/urls/${newShortURL}`);
   }
@@ -149,8 +154,7 @@ app.post("/urls", (req, res) => {
 
 });
 
-
-// update existing shortURL
+// Update existing shortURL
 app.post("/urls/:shortURL", (req, res) => {
   const user_id = req.session.user_id;
 
@@ -163,6 +167,7 @@ app.post("/urls/:shortURL", (req, res) => {
   res.redirect("/urls");
 });
 
+// Show shortURL page for editing if user is logged in
 app.get("/urls/:shortURL", (req, res) => {
   const user_id = req.session.user_id;
 
@@ -174,12 +179,13 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[user_id]
+    user: users[user_id],
+    dateCreated: urlDatabase[req.params.shortURL].dateCreated
   };
   res.render("urls_show", templateVars);
 });
 
-// redirecting shortLink
+// shortURL redirection
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     return res.status(404).send("Link does not exist!");
@@ -189,7 +195,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// delete existing shortURL
+// Delete existing shortURL if permissions are met
 app.post("/urls/:shortURL/delete", (req, res) => {
   const user_id = req.session.user_id;
 
@@ -201,7 +207,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-
+// Display test database
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
