@@ -143,9 +143,9 @@ app.post("/urls", (req, res) => {
   if (users[req.session.user_id]) {
     const newShortURL = generateRandomString();
     const user_id = req.session.user_id;
-    const d = new Date();
+    const d = new Date()
 
-    urlDatabase[newShortURL] = { longURL: "http://" + req.body.longURL, userID: user_id, dateCreated: new Date().toDateString() };
+    urlDatabase[newShortURL] = { longURL: "http://" + req.body.longURL, userID: user_id, dateCreated: `${d.toDateString()}` };
 
     return res.redirect(`/urls/${newShortURL}`);
   }

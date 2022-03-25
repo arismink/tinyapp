@@ -11,6 +11,7 @@ All included features can be found: [here](http://github.com/arismink/tinyapp/bl
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/login_page.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/register.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/urls_index.png)
+![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/urls_show.png) 
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/url_new.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/access_denied.png) 
 
