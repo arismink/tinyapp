@@ -5,7 +5,8 @@ const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 
-const { generateRandomString, findUserByEmail, userURLS } = require("./helpers")
+const { generateRandomString, findUserByEmail, userURLS } = require("./helpers");
+const { users, urlDatabase } = require("./data")
 
 app.set("view engine", "ejs");
 
@@ -18,44 +19,6 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: bcrypt.hashSync("dishwasher-funk", 10)
-  },
-  "u_94x92": {
-    id: "u_94x92",
-    email: "a@test.ca",
-    password: bcrypt.hashSync("hi", 10)
-  }
-};
-
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "aJ48lW"
-    },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW"
-  },
-  hf43nj: {
-    longURL: "https://www.facebook.com",
-    userID: "u_94x92"
-  },
-  kf932d: {
-    longURL: "https://www.example.edu",
-    userID: "u_94x92"
-  }
-};
-
-
 app.get("/", (req, res) => {
   res.send("Hi there!");
 });
@@ -65,7 +28,7 @@ app.get("/access_denied", (req, res) => {
   const templateVars = {
     user: undefined
   };
-  res.render("urls_accessDenied", templateVars);
+  res.render("accessDenied", templateVars);
 })
 
 // homepage
@@ -95,7 +58,7 @@ app.get("/register", (req, res) => {
     user: users[user_id]
   };
   console.log("Existing users:", users);
-  res.render("urls_registration", templateVars);
+  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
@@ -107,7 +70,7 @@ app.post("/register", (req, res) => {
   const randUserID = 'u_' + generateRandomString();
 
   if (!userEnteredEmail) {
-    return res.error(404).send("The email entered cannot be empty.");
+    return res.status(404).send("The email entered cannot be empty.");
   }
   if (!userEnteredPassword) {
     return res.status(404).send("The password entered cannot be empty.");
@@ -141,7 +104,7 @@ app.get("/login", (req, res) => {
     user: req.session.user_id
   };
 
-  res.render("urls_login", templateVars);
+  res.render("login", templateVars);
 });
 
 app.post("/login", (req, res) => {
@@ -171,14 +134,14 @@ app.post("/logout", (req, res) => {
 // create new shortURL
 app.get("/urls/new", (req, res) => {
   const user_id = req.session.user_id;
-
-  if (!user_id) {
-    return res.redirect("/access_denied");
-  } 
   const templateVars = {
-    urls: userURLS(urlDatabase, user_id),
+    urls: urlDatabase,
     user: users[user_id]
   };
+
+  if (!user_id) {
+    return res.status(404).send("Oops! You do not have permission to perform this action. Please login or register to continue.\n").redirect("/access_denied");
+  } 
 
   res.render("urls_new", templateVars);
 });
@@ -193,7 +156,7 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${newShortURL}`);
 
   } else {
-    res.status(403).redirect("/login");
+    res.status(403).send("Oops! You do not have permission to perform this action. Please login or register to continue.\n").redirect("/login");
   }
 });
 
@@ -203,17 +166,23 @@ app.post("/urls/:shortURL", (req, res) => {
   const user_id = req.session.user_id;
 
   if (!user_id || urlDatabase[req.params.shortURL].userID !== user_id) {
-    return res.status(403).send("Oops! You do not have permission to delete this link!");
+    return res.status(403).send("Oops! You do not have permission to edit this link!\n");
   }
 
   urlDatabase[req.params.shortURL] = { longURL: 'http://' + req.body.longURL, userID: user_id }
 
   console.log('Database updated: ', urlDatabase);
+  res.redirect("/urls");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-
   const user_id = req.session.user_id;
+
+  if (!urlDatabase[req.params.shortURL]) return res.status(404).send("Oops! This shortURL does not exist.\n");
+
+  if (!user_id || urlDatabase[req.params.shortURL].userID !== user_id) {
+    return res.status(403).send("Oops! You do not have permission to edit this link!\n");
+  }
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
@@ -238,7 +207,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const user_id = req.session.user_id;
 
   if (!user_id || urlDatabase[req.params.shortURL].userID !== user_id) {
-    return res.status(403).send("Oops! You do not have permission to delete this link!");
+    return res.status(403).send("Oops! You do not have permission to delete this link!\n");
   }
 
   delete urlDatabase[req.params.shortURL];
