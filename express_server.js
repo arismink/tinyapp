@@ -86,7 +86,10 @@ app.get("/urls", (req, res) => {
 
 // registration
 app.get("/register", (req, res) => {
+  if (req.session.user_id) return res.redirect("/urls");
+
   const user_id = req.session.user_id;
+
   console.log("Registered user:", user_id);
   const templateVars = {
     user: users[user_id]
@@ -96,6 +99,8 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  console.log('register console', req.session.user_id);
+
   const userEnteredEmail = req.body.email;
   const userEnteredPassword = req.body.password;
   const hashedPassword = bcrypt.hashSync(userEnteredPassword, 10);
@@ -117,21 +122,26 @@ app.post("/register", (req, res) => {
     email: userEnteredEmail,
     password: hashedPassword
   };
+
   console.log('New user registered:', randUserID);
   console.log('Existing users in database:', users);
 
-  req.session.user = req.body.user_id;
+  req.session.user_id = randUserID;
+
   res.redirect("/urls")
 
 });
 
 // login
 app.get("/login", (req, res) => {
-  const templateVars = {
-    user: undefined
-  };
-  res.render("urls_login", templateVars);
 
+  if (req.session.user_id) return res.redirect("/urls");
+
+  const templateVars = {
+    user: req.session.user_id
+  };
+
+  res.render("urls_login", templateVars);
 });
 
 app.post("/login", (req, res) => {
@@ -145,11 +155,9 @@ app.post("/login", (req, res) => {
       console.log("Logged in user:", user_id);
       req.session.user_id = user_id;
       return res.redirect("/urls");
-    } else {
-      return res.status(403).send("The email and password entered do not match. Please try again.");
     }
+    return res.status(403).send("The email and password entered do not match. Please try again.");
   }
-
   return res.status(403).send("Email cannot be found. Please enter a valid email address.")
 
 });
@@ -169,8 +177,9 @@ app.get("/urls/new", (req, res) => {
   } 
   const templateVars = {
     urls: userURLS(urlDatabase, user_id),
-    user: user_id
+    user: users[user_id]
   };
+
   res.render("urls_new", templateVars);
 });
 
@@ -179,9 +188,8 @@ app.post("/urls", (req, res) => {
     const newShortURL = generateRandomString();
     const user_id = req.session.user_id;
 
-    urlDatabase[newShortURL] = { longURL: 'http://' + req.body.longURL, userID: user_id }
+    urlDatabase[newShortURL] = { longURL: 'http://' + req.body.longURL, userID: user_id };
     console.log(`New short url created: ${newShortURL} for ${req.body.longURL}`);
-    console.log("Ur")
     res.redirect(`/urls/${newShortURL}`);
 
   } else {
@@ -194,12 +202,17 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const user_id = req.session.user_id;
 
+  if (!user_id || urlDatabase[req.params.shortURL].userID !== user_id) {
+    return res.status(403).send("Oops! You do not have permission to delete this link!");
+  }
+
   urlDatabase[req.params.shortURL] = { longURL: 'http://' + req.body.longURL, userID: user_id }
 
   console.log('Database updated: ', urlDatabase);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+
   const user_id = req.session.user_id;
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -224,7 +237,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const user_id = req.session.user_id;
 
-  if (user_id === undefined || urlDatabase[req.params.shortURL].userID !== user_id) {
+  if (!user_id || urlDatabase[req.params.shortURL].userID !== user_id) {
     return res.status(403).send("Oops! You do not have permission to delete this link!");
   }
 
