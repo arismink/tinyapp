@@ -4,11 +4,12 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 This project was created for educational purposes to become acquainted with GET and POST methods.
 
+All included features can be found: [here](http://github.com/arismink/tinyapp/blob/master/README.md)
 
 ## Final Product
 
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/login_page.png)
-![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/register)
+![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/register.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/urls_index.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/url_new.png)
 ![ScreenShot](https://raw.githubusercontent.com/arismink/tinyapp/master/docs/access_denied.png) 
